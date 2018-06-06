@@ -64,8 +64,9 @@ func safeClose(conn net.Conn) {
 
 func (proxy *proxy) handle(ctx context.Context, downstreamIn io.Reader, downstream net.Conn, upstream net.Conn) error {
 	defer func() {
+		log.Debug("Closing downstream")
 		if closeErr := downstream.Close(); closeErr != nil {
-			log.Tracef("Error closing downstream connection: %s", closeErr)
+			log.Debugf("Error closing downstream connection: %s", closeErr)
 		}
 	}()
 
@@ -282,7 +283,7 @@ func (proxy *proxy) writeResponse(downstream io.Writer, req *http.Request, resp 
 	if err != nil && resp.Body != nil {
 		resp.Body.Close()
 	}
-	log.Debugf("Wrote response:\n%v", buffer.String())
+	log.Debugf("Wrote response, err: %v:\n%v", err, buffer.String())
 	return err
 }
 
